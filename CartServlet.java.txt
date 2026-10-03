@@ -1,0 +1,426 @@
+package com.fashionstore.servlet; 
+ 
+ 
+ 
+import java.io.IOException; 
+ 
+import java.util.ArrayList; 
+ 
+import java.util.List; 
+ 
+ 
+ 
+import com.fashionstore.model.CartItem; 
+ 
+import com.fashionstore.model.Product; 
+ 
+ 
+ 
+import jakarta.servlet.ServletException; 
+ 
+import jakarta.servlet.annotation.WebServlet; 
+ 
+import jakarta.servlet.http.HttpServlet; 
+ 
+import jakarta.servlet.http.HttpServletRequest; 
+ 
+import jakarta.servlet.http.HttpServletResponse; 
+ 
+import jakarta.servlet.http.HttpSession; 
+ 
+ 
+ 
+@WebServlet("/CartServlet") 
+ 
+public class CartServlet extends HttpServlet { 
+ 
+ 
+ 
+    private static final long serialVersionUID = 1L; 
+ 
+ 
+ 
+    public CartServlet() { 
+ 
+        super(); 
+ 
+    } 
+ 
+ 
+ 
+    // ========================= 
+ 
+    // ADD / REMOVE / QUANTITY 
+ 
+    // ========================= 
+ 
+ 
+ 
+    @Override 
+ 
+ protected void doPost(HttpServletRequest request, 
+ 
+                           HttpServletResponse response) 
+ 
+            throws ServletException, IOException { 
+ 
+ 
+ 
+        // Get existing session 
+ 
+        HttpSession session = request.getSession(); 
+ 
+ 
+ 
+        // Get cart from session 
+ 
+        @SuppressWarnings("unchecked") 
+ 
+        List<CartItem> cart = 
+ 
+                (List<CartItem>) session.getAttribute("cart"); 
+ 
+ 
+ 
+        // If cart doesn't exist, create it 
+ 
+        if (cart == null) { 
+ 
+            cart = new ArrayList<>(); 
+ 
+        } 
+ 
+ 
+ 
+        // Get action 
+ 
+        String action = request.getParameter("action"); 
+ 
+ 
+ 
+        // Get product ID 
+ 
+        int id = Integer.parseInt( 
+ 
+                request.getParameter("id") 
+ 
+        ); 
+ 
+ 
+ 
+        // ========================= 
+ 
+        // ADD PRODUCT 
+ 
+        // ========================= 
+ 
+ 
+ 
+        if ("add".equals(action)) { 
+ 
+ 
+ 
+            String name = 
+ 
+                    request.getParameter("name"); 
+ 
+ 
+ 
+            double price = 
+ 
+                    Double.parseDouble( 
+ 
+                            request.getParameter("price") 
+ 
+                    ); 
+ 
+ 
+ 
+            String category = 
+ 
+                    request.getParameter("category"); 
+ 
+ 
+ 
+            String image = 
+ 
+                    request.getParameter("image"); 
+ 
+ 
+ 
+            Product product = new Product( 
+ 
+                    id, 
+ 
+                    name, 
+ 
+                    category, 
+ 
+                    price, 
+ 
+                    "", 
+ 
+                    image 
+ 
+            ); 
+ 
+ 
+ 
+            boolean found = false; 
+ 
+ 
+ 
+            // Check whether product already exists 
+ 
+            for (CartItem item : cart) { 
+ 
+ 
+ 
+                if (item.getProduct().getId() == id) { 
+ 
+ 
+ 
+                    item.setQuantity( 
+ 
+                            item.getQuantity() + 1 
+ 
+                    ); 
+ 
+ 
+ 
+                    found = true; 
+ 
+                    break; 
+ 
+                } 
+ 
+            } 
+ 
+ 
+ 
+            // If product is not already in cart 
+ 
+            if (!found) { 
+ 
+ 
+ 
+                CartItem item = 
+ 
+                        new CartItem(product, 1); 
+ 
+ 
+ 
+                cart.add(item); 
+ 
+            } 
+ 
+        } 
+ 
+ 
+ 
+        // ========================= 
+ 
+        // REMOVE PRODUCT 
+ 
+        // ========================= 
+ 
+ 
+ 
+        else if ("remove".equals(action)) { 
+ 
+ 
+ 
+            cart.removeIf( 
+ 
+                    item -> 
+ 
+                    item.getProduct().getId() == id 
+ 
+            ); 
+ 
+        } 
+ 
+ 
+ 
+        // ========================= 
+ 
+        // INCREASE QUANTITY 
+ 
+        // ========================= 
+ 
+ 
+ 
+        else if ("increase".equals(action)) { 
+ 
+ 
+ 
+            for (CartItem item : cart) { 
+ 
+ 
+ 
+                if (item.getProduct().getId() == id) { 
+ 
+ 
+ 
+                    item.setQuantity( 
+ 
+                            item.getQuantity() + 1 
+ 
+                    ); 
+ 
+ 
+ 
+                    break; 
+ 
+                } 
+ 
+            } 
+ 
+        } 
+ 
+ 
+ 
+        // ========================= 
+ 
+        // DECREASE QUANTITY 
+ 
+        // ========================= 
+ 
+ 
+ 
+        else if ("decrease".equals(action)) { 
+ 
+ 
+ 
+            for (CartItem item : cart) { 
+ 
+ 
+ 
+                if (item.getProduct().getId() == id) { 
+ 
+ 
+ 
+                    if (item.getQuantity() > 1) { 
+ 
+ 
+ 
+                        item.setQuantity( 
+ 
+                                item.getQuantity() - 1 
+ 
+                        ); 
+ 
+ 
+ 
+                    } else { 
+ 
+ 
+ 
+                        cart.remove(item); 
+ 
+                    } 
+ 
+ 
+ 
+                    break; 
+ 
+                } 
+ 
+            } 
+ 
+        } 
+ 
+ 
+ 
+        // Save cart in session 
+ 
+        session.setAttribute("cart", cart); 
+ 
+ 
+ 
+        // Go to cart page 
+ 
+        response.sendRedirect("CartServlet"); 
+ 
+    } 
+ 
+ 
+ 
+ 
+ 
+    // ========================= 
+ 
+    // DISPLAY CART 
+ 
+    // ========================= 
+ 
+ 
+ 
+    @Override 
+ 
+ protected void doGet(HttpServletRequest request, 
+ 
+                         HttpServletResponse response) 
+ 
+            throws ServletException, IOException { 
+ 
+ 
+ 
+        HttpSession session = request.getSession(); 
+ 
+ 
+ 
+        @SuppressWarnings("unchecked") 
+ 
+        List<CartItem> cart = 
+ 
+                (List<CartItem>) session.getAttribute("cart"); 
+ 
+ 
+ 
+        // Create empty cart if needed 
+ 
+        if (cart == null) { 
+ 
+            cart = new ArrayList<>(); 
+ 
+        } 
+ 
+ 
+ 
+        // Calculate total 
+ 
+        double total = 0; 
+ 
+ 
+ 
+        for (CartItem item : cart) { 
+ 
+ 
+ 
+            total += item.getSubtotal(); 
+ 
+        } 
+ 
+ 
+ 
+        // Send data to JSP 
+ 
+        request.setAttribute("cart", cart); 
+ 
+ 
+ 
+        request.setAttribute("total", total); 
+ 
+ 
+ 
+        // Open cart.jsp 
+ 
+        request.getRequestDispatcher("cart.jsp") 
+ 
+               .forward(request, response); 
+ 
+    } 
+ 
+} 
+ 

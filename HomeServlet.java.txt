@@ -1,0 +1,214 @@
+package com.fashionstore.servlet; 
+ 
+ 
+ 
+import java.io.IOException; 
+ 
+import java.util.ArrayList; 
+ 
+import java.util.List; 
+ 
+ 
+ 
+import com.fashionstore.model.Product; 
+ 
+ 
+ 
+import jakarta.servlet.ServletException; 
+ 
+import jakarta.servlet.annotation.WebServlet; 
+ 
+import jakarta.servlet.http.HttpServlet; 
+ 
+import jakarta.servlet.http.HttpServletRequest; 
+ 
+import jakarta.servlet.http.HttpServletResponse; 
+ 
+ 
+ 
+@WebServlet("/HomeServlet") 
+ 
+public class HomeServlet extends HttpServlet { 
+ 
+ 
+ 
+    private static final long serialVersionUID = 1L; 
+ 
+ 
+ 
+    public HomeServlet() { 
+ 
+        super(); 
+ 
+    } 
+ 
+ 
+ 
+    @Override 
+ 
+ protected void doGet(HttpServletRequest request, 
+ 
+                         HttpServletResponse response) 
+ 
+            throws ServletException, IOException { 
+ 
+ 
+ 
+        // Create product list 
+ 
+        List<Product> products = new ArrayList<>(); 
+ 
+ 
+ 
+        // Product 1 
+ 
+        products.add(new Product( 
+ 
+                1, 
+ 
+                "Classic Denim Jacket", 
+ 
+                "Jackets", 
+ 
+                1999, 
+ 
+                "Premium denim jacket with a stylish modern fit.", 
+ 
+                "https://images.unsplash.com/photo-1551028719-00167b16eac5" 
+ 
+        )); 
+ 
+ 
+ 
+        // Product 2 
+ 
+        products.add(new Product( 
+ 
+                2, 
+ 
+                "Elegant Summer Dress", 
+ 
+                "Dresses", 
+ 
+                2499, 
+ 
+                "Beautiful floral summer dress for casual occasions.", 
+ 
+                "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446" 
+ 
+        )); 
+ 
+ 
+ 
+        // Product 3 
+ 
+        products.add(new Product( 
+ 
+                3, 
+ 
+                "Oversized Hoodie", 
+ 
+                "Hoodies", 
+ 
+                1499, 
+ 
+                "Comfortable oversized hoodie with premium cotton fabric.", 
+ 
+                "https://images.unsplash.com/photo-1556821840-3a63f95609a7" 
+ 
+        )); 
+ 
+ 
+ 
+        // Product 4 
+ 
+        products.add(new Product( 
+ 
+                4, 
+ 
+                "Classic White Sneakers", 
+ 
+                "Footwear", 
+ 
+                2999, 
+ 
+                "Minimal white sneakers suitable for everyday fashion.", 
+ 
+                "https://images.unsplash.com/photo-1542291026-7eec264c27ff" 
+ 
+        )); 
+ 
+ 
+ 
+        // Product 5 
+ 
+        products.add(new Product( 
+ 
+                5, 
+ 
+                "Leather Handbag", 
+ 
+                "Accessories", 
+ 
+                3299, 
+ 
+                "Elegant handbag designed for modern fashion lovers.", 
+ 
+                "https://images.unsplash.com/photo-1584917865442-de89df76afd3" 
+ 
+        )); 
+ 
+ 
+ 
+        // Product 6 
+ 
+        products.add(new Product( 
+ 
+                6, 
+ 
+                "Casual Cotton Shirt", 
+ 
+                "Shirts", 
+ 
+                1299, 
+ 
+                "Soft cotton shirt with a clean and stylish appearance.", 
+ 
+                "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf" 
+ 
+        )); 
+ 
+ 
+ 
+        // Send products to JSP 
+ 
+        request.setAttribute("products", products); 
+ 
+ 
+ 
+        // Open products.jsp 
+ 
+        request.getRequestDispatcher("products.jsp") 
+ 
+               .forward(request, response); 
+ 
+    } 
+ 
+ 
+ 
+    @Override 
+ 
+ protected void doPost(HttpServletRequest request, 
+ 
+                          HttpServletResponse response) 
+ 
+            throws ServletException, IOException { 
+ 
+ 
+ 
+        doGet(request, response); 
+ 
+    } 
+ 
+} 
+ 
